@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookVerse - Read & Write Stories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            margin: 0 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #555;
+            transition: color 0.3s;
+        }
+
+        .nav-links button:hover {
+            color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Pages Container */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page */
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-buttons button {
+            margin: 0.5rem;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-hero-primary {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .btn-hero-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-hero-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 3rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Login/Signup Forms */
+        .form-container {
+            max-width: 450px;
+            margin: 3rem auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.2);
+        }
+
+        .form-container h2 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.02);
+        }
+
+        .form-switch {
+            text-align: center;
+            margin-top: 1rem;
+            color: #666;
+        }
+
+        .form-switch a {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Library Page */
+        .library-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .library-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .library-header h1 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .search-bar select {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .search-bar button {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .search-bar button:hover {
+            transform: scale(1.05);
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .book-cover {
+            height: 350px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-cover.hp {
+            background: linear-gradient(135deg, #740001 0%, #ae0001 100%);
+        }
+
+        .book-cover.marvel {
+            background: linear-gradient(135deg, #e23636 0%, #c41e3a 100%);
+        }
+
+        .book-cover.dc {
+            background: linear-gradient(135deg, #0078d4 0%, #003d79 100%);
+        }
+
+        .book-cover.fantasy {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .book-cover.scifi {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+        }
+
+        .book-cover.mystery {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .book-cover.romance {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-description {
+            color: #777;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .book-genre {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #667eea;
+        }
+
+        .book-fandom {
+            display: inline-block;
+            background: #ffe0e0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #e63946;
+            font-weight: 600;
+        }
+
+        /* Book Reader */
+        .reader-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .reader-header {
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .reader-header h1 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-meta {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .book-meta-description {
+            color: #777;
+            font-style: italic;
+            line-height: 1.6;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .book-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .book-content p {
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .book-content h2 {
+            color: #667eea;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .reader-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .reader-nav button {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .reader-nav button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Write Page */
+        .write-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .write-container h1 {
+            color: #667eea;
+            margin-bottom: 2rem;
+        }
+
+        .editor {
+            margin-bottom: 1.5rem;
+        }
+
+        .editor textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            resize: vertical;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: scale(1.05);
+        }
+
+        .template-selector {
+            margin-bottom: 2rem;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .template-card {
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .template-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: scale(1.05);
+        }
+
+        .template-card.selected {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .template-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .template-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">📚 BookVerse</div>
+        <div class="nav-links" id="navLinks">
+            <button onclick="showPage('home')">Home</button>
+            <button onclick="showPage('login')" class="btn-primary" id="loginBtn">Login</button>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="homePage" class="page active">
+        <div class="hero">
+            <h1>Welcome to BookVerse</h1>
+            <p>Discover amazing stories from your favorite fandoms, write your own, and join a community of book lovers</p>
+            <div class="hero-buttons">
+                <button class="btn-hero-primary" onclick="showPage('signup')">Get Started</button>
+                <button class="btn-hero-secondary" onclick="showPage('login')">Sign In</button>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📖</div>
+                <h3>Read Books</h3>
+                <p>Explore stories from Harry Potter, Marvel, DC, and more fandoms</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✍️</div>
+                <h3>Write Stories</h3>
+                <p>Use templates to create fanfiction or original stories</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Discover</h3>
+                <p>Search by genre, fandom, or author to find your next read</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="page">
+        <div class="form-container">
+            <h2>Welcome Back!</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn-submit">Login</button>
+            </form>
+            <div class="form-switch">
+                Don't have an account? <a onclick="showPage('signup')">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signupPage" class="page">
+        <div class="form-container">
+            <h2>Create Your Account</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label>Bio (Optional)</label>
+                    <textarea id="signupBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Sign Up</button>
+            </form>
+            <div class="form-switch">
+                Already have an account? <a onclick="showPage('login')">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Library Page -->
+    <div id="libraryPage" class="page">
+        <div class="library-container">
+            <div class="library-header">
+                <h1>Book Library</h1>
+                <p>Explore our collection of fanfiction and original stories</p>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search for books by title or author..." onkeyup="searchBooks()">
+                    <select id="fandomFilter" onchange="filterBooks()">
+                        <option value="all">All Fandoms</option>
+                        <option value="Harry Potter">Harry Potter</option>
+                        <option value="Marvel">Marvel</option>
+                        <option value="DC">DC</option>
+                        <option value="Original">Original</option>
+                    </select>
+                    <select id="genreFilter" onchange="filterBooks()">
+                        <option value="all">All Genres</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Action">Action</option>
+                        <option value="Adventure">Adventure</option>
+                    </select>
+                    <button onclick="searchBooks()">🔍 Search</button>
+                </div>
+            </div>
+
+            <div class="books-grid" id="booksGrid"></div>
+        </div>
+    </div>
+
+    <!-- Book Reader Page -->
+    <div id="readerPage" class="page">
+        <div class="reader-container">
+            <div class="reader-header">
+                <h1 id="readerTitle"></h1>
+                <div class="book-meta">
+                    <span id="readerAuthor"></span> • <span id="readerGenre"></span> • <span id="readerFandom"></span>
+                </div>
+                <div class="book-meta-description" id="readerDescription"></div>
+            </div>
+            <div class="book-content" id="bookContent"></div>
+            <div class="reader-nav">
+                <button onclick="showPage('library')">← Back to Library</button>
+                <button onclick="alert('This is a demo. In a full version, this would load the next chapter!')">Next Chapter →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Write Page -->
+    <div id="writePage" class="page">
+        <div class="write-container">
+            <h1>Write Your Story</h1>
+            
+            <div class="template-selector">
+                <label><strong>Choose a Template:</strong></label>
+                <div class="template-grid">
+                    <div class="template-card" onclick="selectTemplate('hp')">
+                        <div class="template-icon">⚡</div>
+                        <div class="template-name">Harry Potter</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('marvel')">
+                        <div class="template-icon">🦸</div>
+                        <div class="template-name">Marvel</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('dc')">
+                        <div class="template-icon">🦇</div>
+                        <div class="template-name">DC</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('original')">
+                        <div class="template-icon">📝</div>
+                        <div class="template-name">Original</div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="publishForm">
+                <div class="form-group">
+                    <label>Story Title</label>
+                    <input type="text" id="storyTitle" required placeholder="Enter your story title">
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select id="storyGenre" required>
+                        <option value="">Select a genre</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Action">Action</option>
+                        <option value="Adventure">Adventure</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fandom (Optional)</label>
+                    <select id="storyFandom">
+                        <option value="Original">Original</option>
+                        <option value="Harry Potter">Harry Potter</option>
+                        <option value="Marvel">Marvel</option>
+                        <option value="DC">DC</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Short Description</label>
+                    <textarea id="storyDescription" rows="3" required placeholder="Write a brief description of your story..."></textarea>
+                </div>
+                <div class="editor">
+                    <label>Your Story</label>
+                    <textarea id="storyContent" required placeholder="Start writing your story here..."></textarea>
+                </div>
+                <button type="submit" class="btn-save">📝 Publish Story</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample books data with fandoms
+        const books = [
+            {
+                id: 1,
+                title: "The Marauders' Last Stand",
+                author: "LilyEvans1978",
+                genre: "Fantasy",
+                fandom: "Harry Potter",
+                icon: "⚡",
+                coverClass: "hp",
+                description: "A tale of friendship, bravery, and sacrifice as James, Sirius, Remus, and Peter face their greatest challenge during the First Wizarding War.",
+                content: "The moon hung low over Godric's Hollow, casting silver shadows across the cobblestone streets. James Potter stood at the window of his cottage, baby Harry sleeping peacefully in the room above.\n\n'They're coming,' Sirius had warned him just hours ago. 'You-Know-Who knows where you are.' But James had made his choice. He would protect his family, no matter the cost.\n\nThe Fidelius Charm was their only hope now. Peter, their trusted friend, held the secret. Surely, they would be safe. Surely, the bonds of friendship forged at Hogwarts would hold strong against the darkness.\n\nBut in the shadows, betrayal was already taking root, and the night would soon echo with tragedy that would change the wizarding world forever.\n\nYears of pranks and laughter at Hogwarts seemed like a distant dream now. The Marauders had grown up, but the war had grown faster. Every day brought news of new losses, new horrors inflicted by Death Eaters.\n\nRemus had warned them about trusting too easily. 'We're living in dark times,' he'd said. 'Anyone could be a spy.' But they had laughed it off. Not their Peter. Not Wormtail. He was one of them."
+            },
+            {
+                id: 2,
+                title: "Spider-Verse: Shadows of Tomorrow",
+                author: "WebHead2099",
+                genre: "Sci-Fi",
+                fandom: "Marvel",
+                icon: "🕷️",
+                coverClass: "marvel",
+                description: "When Miles Morales discovers a mysterious glitch in the multiverse, he must team up with Spider-People from alternate dimensions to save reality itself.",
+                content: "The city never sleeps, and neither does Spider-Man. Miles Morales swung between the skyscrapers of Brooklyn, his suit's camouflage flickering in the neon lights.\n\nThat's when he saw it—a tear in reality itself, pulsing with unstable energy. Through it, he glimpsed other worlds, other Spider-People, all facing the same mysterious threat.\n\n'What the—' Miles didn't get to finish his sentence before he was pulled through the portal, tumbling into a kaleidoscope of infinite possibilities.\n\nHe landed hard on a rooftop, but it wasn't his New York. The sky was too red, the buildings too twisted. And standing before him was another Spider-Man, but this one was made entirely of shadows.\n\n'Welcome to the Dark Dimension,' the shadow said. 'We've been expecting you, Miles Morales. You're the only one who can fix what's been broken.'\n\nMiles looked around at the dystopian cityscape, his spider-sense tingling with warning. Whatever was happening, it was bigger than anything he'd faced before. The fate of every universe hung in the balance."
+            },
+            {
+                id: 3,
+                title: "Gotham's Reckoning",
+                author: "DarkKnight88",
+                genre: "Mystery",
+                fandom: "DC",
+                icon: "🦇",
+                coverClass: "dc",
+                description: "Batman faces his most cunning adversary yet when a new villain emerges, someone who knows Bruce Wayne's secrets and is systematically dismantling everything he's built.",
+                content: "The Bat-Signal pierced the Gotham night, but this time, Commissioner Gordon's message was different. 'Bruce, it's personal this time.'\n\nBatman arrived at the GCPD rooftop to find Gordon holding a file—his file. Photos of Bruce Wayne, detailed records of Batman's movements, connections to every member of the Bat-family.\n\n'It was left on my desk,' Gordon said grimly. 'With a note: The Dark Knight's reign ends at dawn.'\n\nBruce's jaw tightened behind the cowl. Someone knew everything. Every secret identity, every safe house, every weakness. And they were playing a very dangerous game.\n\nBack in the Batcave, Alfred stood before the computer, his expression grave. 'Master Bruce, the cave's security systems have been breached. Someone has been watching us for months.'\n\nBatman pulled up the footage, and his blood ran cold. The figure in the shadows wasn't a random criminal. It was someone he once trusted, someone he thought was dead.\n\n'This isn't just an attack on Batman,' Bruce realized. 'It's an attack on everything Bruce Wayne has ever built. They want to destroy both identities.'"
+            },
+            {
+                id: 4,
+                title: "The Avengers: Infinity's Echo",
+                author: "StarkIndustries",
+                genre: "Action",
+                fandom: "Marvel",
+                icon: "💎",
+                coverClass: "marvel",
+                description: "After the events of Endgame, strange energy readings appear across the galaxy. The remaining Avengers discover that the Infinity Stones' destruction created a catastrophic ripple effect.",
+                content: "The Avengers compound was supposed to be quiet. Those days of universe-ending threats were over. Or so they thought.\n\n'Bruce, you need to see this,' Carol Danvers' voice crackled through the comms. 'There's something wrong with space-time itself.'\n\nBruce Banner arrived at the observation deck to find readings he'd hoped never to see again. Energy signatures matching the Infinity Stones, but fractured, unstable, appearing in random locations across the universe.\n\n'When Thanos destroyed the stones, he didn't eliminate their power,' Bruce realized, his mind racing. 'He scattered it. And now it's trying to reassemble itself.'\n\nSam Wilson, now Captain America, stood beside him. 'So what does that mean for us?'\n\n'It means,' Bruce said grimly, 'that we have about 48 hours before reality tears itself apart. We need to find every fragment before they converge.'\n\nThe team assembled once more. Thor arrived from New Asgard, his eyes still carrying the weight of loss. Peter Parker swung in, no longer a kid but a seasoned hero. Even Clint came out of retirement.\n\n'Avengers,' Sam said, raising his shield. 'One more time.'"
+            },
+            {
+                id: 5,
+                title: "Hogwarts: The Eighth Year",
+                author: "MuggleWriter93",
+                genre: "Fantasy",
+                fandom: "Harry Potter",
+                icon: "🏰",
+                coverClass: "hp",
+                description: "After the Battle of Hogwarts, a special eighth year is created for students who missed their education. Harry, Ron, and Hermione return to a castle that holds both cherished memories and painful scars.",
+                content: "The Hogwarts Express pulled away from Platform 9¾, but this time felt different. Harry Potter watched the familiar countryside roll by, feeling oddly out of place.\n\n'Never thought we'd be coming back,' Ron said, munching on a Chocolate Frog. 'Feels weird, doesn't it?'\n\nHermione looked up from her book—already studying, of course. 'It's necessary. We missed so much during the war. Besides, the castle needs us as much as we need it.'\n\nThe Great Hall had been rebuilt, but you could still see the scars. Cracked pillars, newer stones among the old, and empty seats where friends once sat. Neville was there, of course, now a teaching assistant to Professor Sprout.\n\n'Welcome back,' McGonagall said, her voice carrying across the hall. 'This year is about healing, about learning, and about remembering. The war took much from us, but it did not break us.'\n\nAs Harry climbed the stairs to Gryffindor Tower, whispered the password to the Fat Lady ('Phoenix Rising'), he felt something shift. Maybe this eighth year wasn't about going backward. Maybe it was about learning to move forward."
+            },
+            {
+                id: 6,
+                title: "Justice League: New Dawn",
+                author: "MetropolisHero",
+                genre: "Action",
+                fandom: "DC",
+                icon: "⚡",
+                coverClass: "dc",
+                description: "When a cosmic threat emerges that's too powerful for even Superman, the Justice League must recruit new heroes and form unlikely alliances to save Earth.",
+                content: "The Watchtower's alarms blared across all frequencies. Batman's fingers flew across the console, pulling up satellite imagery that made even him pause.\n\n'What are we looking at?' Wonder Woman asked, stepping beside him.\n\n'A ship,' Batman replied. 'Bigger than anything we've encountered. It's pulling planets into some kind of portal. And it's heading straight for Earth.'\n\nSuperman arrived in a blur, his face grim. 'I tried to approach it. Whatever energy it's using, it weakens me. We need help.'\n\nFlash skidded to a stop. 'Help? We're the Justice League. We ARE the help!'\n\n'Not this time,' Batman said, activating a series of files. 'We need everyone. Every hero, every ally. Even former enemies.'\n\nThe call went out across the world. Green Lantern gathered the Corps. Aquaman summoned the armies of Atlantis. Cyborg coordinated with every technological defense system on the planet.\n\nBut as the ship grew closer, blotting out the sun, one question remained: Would it be enough?\n\n'We don't have a choice,' Superman said, determination burning in his eyes. 'We stand together, or we fall separately. For Earth!'"
+            },
+            {
+                id: 7,
+                title: "Stark's Legacy",
+                author: "IronFan3000",
+                genre: "Sci-Fi",
+                fandom: "Marvel",
+                icon: "🔧",
+                coverClass: "marvel",
+                description: "Peter Parker discovers Tony Stark left him more than just a high-tech suit. Hidden files reveal a secret project that could change the future of heroism forever—if Peter can finish what Tony started.",
+                content: "The workshop was exactly as Tony had left it. Dust covered the workbenches, but the Arc Reactor core still hummed with power. Peter Parker stood in the doorway, unable to step inside.\n\n'FRIDAY?' he called out hesitantly.\n\n'Welcome back, Peter,' the AI responded warmly. 'I've been waiting for you.'\n\n'Waiting? For what?'\n\n'Mr. Stark left specific instructions. He knew... he knew he might not come back from that final battle. He wanted you to have this.'\n\nA hologram flickered to life, and there was Tony, casual and smiling. 'Hey, kid. If you're seeing this, well... things didn't go according to plan. But that's okay. Because I've got one more plan, one more project. And I need you to finish it.'\n\nThe hologram gestured, and blueprints exploded across every surface. Not just for a suit, but for an entire network. A way to protect the world even when heroes couldn't be everywhere at once.\n\n'This is the future, Peter. And it's yours now. Don't screw it up.' Tony winked. 'Just kidding. I know you won't. You're Spider-Man. You're better than I ever was.'\n\nPeter wiped his eyes and rolled up his sleeves. Time to get to work."
+            },
+            {
+                id: 8,
+                title: "The Forbidden Forest Chronicles",
+                author: "MagicalBeasts101",
+                genre: "Adventure",
+                fandom: "Harry Potter",
+                icon: "🦄",
+                coverClass: "hp",
+                description: "A Care of Magical Creatures student discovers a hidden section of the Forbidden Forest where ancient magical creatures thought extinct still thrive, but their sanctuary is under threat.",
+                content: "Luna Scamander (née Lovegood) had always known the Forbidden Forest held secrets. But she never expected this.\n\nFollowing a trail of silver hoof prints, she pushed through a curtain of vines and gasped. Before her lay a valley untouched by time, filled with creatures from legend: phoenixes nested in golden trees, unicorns grazed by a crystal stream, and in the center, a majestic Thestral herd led by a magnificent winged horse she recognized from books—a true Abraxan, thought extinct for centuries.\n\n'You can see them all,' a voice said. An elderly centaur emerged from the shadows. 'Few wizards can. That is why you were chosen.'\n\n'Chosen for what?'\n\n'To protect this place. Dark forces seek to exploit these creatures, to use their magic for power. You must keep the sanctuary hidden.'\n\nLuna touched her wand, thinking of her father, of Newt Scamander's work, of all the magical creatures she'd dedicated her life to protecting.\n\n'I won't let anything happen to them,' she promised.\n\nThe centaur smiled. 'Then let me show you the true wonders of the forest. Your education begins now.'"
+            },
+            {
+                id: 9,
+                title: "Wayne Enterprises: Corporate Espionage",
+                author: "BruceWayneOfficial",
+                genre: "Mystery",
+                fandom: "DC",
+                icon: "💼",
+                coverClass: "dc",
+                description: "Bruce Wayne must navigate a deadly corporate conspiracy without the cowl when someone starts stealing WayneTech secrets, and the trail leads uncomfortably close to people he trusts.",
+                content: "The boardroom was tense. Bruce Wayne sat at the head of the table, every inch the billionaire CEO, but his mind was working like the detective he truly was.\n\n'Someone leaked the Arc Generator designs to LexCorp,' Lucius Fox said quietly. 'It had to be someone with high-level access.'\n\nBruce's jaw tightened. The Arc Generator wasn't just corporate technology—it was designed to power Gotham's infrastructure and, secretly, to charge his Batman equipment. In the wrong hands, it could be weaponized.\n\n'Who had access?' he asked, though he already suspected the answer would hurt.\n\nLucius slid a folder across the table. Three names. Three people Bruce had trusted. One was even someone from his childhood.\n\n'I can't investigate this as Batman,' Bruce realized. 'It's too visible. Too traceable.'\n\n'Then investigate as Bruce Wayne,' Alfred suggested over the comms. 'Sometimes the billionaire playboy sees things the Dark Knight cannot.'\n\nFor the first time in years, Bruce would have to solve a mystery using cocktail parties, business meetings, and charm instead of batarangs and intimidation. And the stakes had never been higher."
+            },
+            {
+                id: 10,
+                title: "The Midnight Garden",
+                author: "Sarah Mitchell",
+                genre: "Fantasy",
+                fandom: "Original",
+                icon: "🌙",
+                coverClass: "fantasy",
+                description: "In an ancient forest where moonlight dances through silver leaves, a garden appears only at midnight, holding secrets that will change a young girl's life forever.",
+                content: "In the heart of an ancient forest, where moonlight danced through silver leaves, there existed a garden that only appeared at midnight. Emily discovered it on her fifteenth birthday, when sleep eluded her and curiosity drew her to the window.\n\nThe garden shimmered with an otherworldly glow, flowers of impossible colors blooming in the darkness. As she stepped through the gate, time seemed to slow, and the air filled with whispers of forgotten magic.\n\n'You found it,' a voice said. A woman materialized from the moonbeams, ageless and ethereal. 'The Garden of Luna. We've been waiting for you, Emily.'\n\n'Waiting? Why?'\n\n'Because you're a Moonweaver, child. Born under the lunar eclipse, blessed with the power to walk between the waking world and the realm of dreams. And we need your help.'\n\nThe woman gestured to the garden. 'This place is dying. The boundary between worlds is weakening. Only a Moonweaver can restore it. Will you help us?'\n\nEmily looked at the magnificent garden, felt the magic thrumming in her veins, and knew her ordinary life had just ended. Her extraordinary adventure was beginning."
+            }
+        ];
+
+        let isLoggedIn = false;
+        let currentBooks = [...books];
+        let selectedTemplate = null;
+
+        // Initialize
+        function init() {
+            renderBooks();
+            setupEventListeners();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Signup form
+            document.getElementById('signupForm').addEventListener('submit', handleSignup);
+            
+            // Publish form
+            document.getElementById('publishForm').addEventListener('submit', handlePublish);
+        }
+
+        // Show page function
+        function showPage(pageName) {
+            // Check if user needs to be logged in
+            if ((pageName === 'library' || pageName === 'write') && !isLoggedIn) {
+                alert('Please login to access this feature!');
+                showPage('login');
+                return;
+            }
+
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageName + 'Page').classList.add('active');
+
+            // Update navigation
+            updateNav();
+        }
+
+        // Update navigation based on login status
+        function updateNav() {
+            const navLinks = document.getElementById('navLinks');
+            if (isLoggedIn) {
+                navLinks.innerHTML = `
+                    <button onclick="showPage('home')">Home</button>
+                    <button onclick="showPage('library')">Library</button>
+                    <button onclick="showPage('write')">Write</button>
+                    <button onclick="logout()" class="btn-primary">Logout</button>
+                `;
+            } else {
+                navLinks.innerHTML = `
+                    <button onclick="showPage('home')">Home</button>
+                    <button onclick="showPage('login')" class="btn-primary">Login</button>
+                `;
+            }
+        }
+
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Simple validation (in a real app, this would connect to a backend)
+            if (email && password) {
+                isLoggedIn = true;
+                alert('Login successful! Welcome to BookVerse!');
+                showPage('library');
+                
+                // Clear form
+                document.getElementById('loginForm').reset();
+            } else {
+                alert('Please enter both email and password');
+            }
+        }
+
+        // Handle signup
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            // Simple validation
+            if (name && email && password) {
+                isLoggedIn = true;
+                alert('Account created successfully! Welcome to BookVerse, ' + name + '!');
+                showPage('library');
+                
+                // Clear form
+                document.getElementById('signupForm').reset();
+            } else {
+                alert('Please fill in all required fields');
+            }
+        }
+
+        // Logout
+        function logout() {
+            isLoggedIn = false;
+            alert('You have been logged out. See you soon!');
+            showPage('home');
+        }
+
+        // Render books
+        function renderBooks() {
+            const grid = document.getElementById('booksGrid');
+            
+            if (currentBooks.length === 0) {
+                grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1/-1; font-size: 1.2rem;">No books found. Try different filters!</p>';
+                return;
+            }
+            
+            grid.innerHTML = currentBooks.map(book => `
+                <div class="book-card" onclick="openBook(${book.id})">
+                    <div class="book-cover ${book.coverClass}">${book.icon}</div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-description">${book.description}</div>
+                        <div class="book-badges">
+                            <span class="book-genre">${book.genre}</span>
+                            <span class="book-fandom">${book.fandom}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search books
+        function searchBooks() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const fandomFilter = document.getElementById('fandomFilter').value;
+            const genreFilter = document.getElementById('genreFilter').value;
+            
+            currentBooks = books.filter(book => {
+                const matchesSearch = query === '' || 
+                    book.title.toLowerCase().includes(query) ||
+                    book.author.toLowerCase().includes(query) ||
+                    book.description.toLowerCase().includes(query);
+                    
+                const matchesFandom = fandomFilter === 'all' || book.fandom === fandomFilter;
+                const matchesGenre = genreFilter === 'all' || book.genre === genreFilter;
+                
+                return matchesSearch && matchesFandom && matchesGenre;
+            });
+            
+            renderBooks();
+        }
+
+        // Filter books
+        function filterBooks() {
+            searchBooks(); // Use the same logic
+        }
+
+        // Open book reader
+        function openBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (book) {
+                document.getElementById('readerTitle').textContent = book.title;
+                document.getElementById('readerAuthor').textContent = `by ${book.author}`;
+                document.getElementById('readerGenre').textContent = book.genre;
+                document.getElementById('readerFandom').textContent = book.fandom;
+                document.getElementById('readerDescription').textContent = book.description;
+                document.getElementById('bookContent').innerHTML = book.content.split('\n\n').map(p => `<p>${p}</p>`).join('');
+                showPage('reader');
+            }
+        }
+
+        // Select template
+        function selectTemplate(template) {
+            selectedTemplate = template;
+            
+            // Remove selected class from all templates
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked template
+            event.target.closest('.template-card').classList.add('selected');
+            
+            // Update form based on template
+            const fandomSelect = document.getElementById('storyFandom');
+            const contentTextarea = document.getElementById('storyContent');
+            
+            switch(template) {
+                case 'hp':
+                    fandomSelect.value = 'Harry Potter';
+                    contentTextarea.placeholder = 'The Hogwarts Express pulled away from Platform 9¾...';
+                    break;
+                case 'marvel':
+                    fandomSelect.value = 'Marvel';
+                    contentTextarea.placeholder = 'The city never sleeps, and neither does the hero...';
+                    break;
+                case 'dc':
+                    fandomSelect.value = 'DC';
+                    contentTextarea.placeholder = 'The Bat-Signal pierced the night sky...';
+                    break;
+                case 'original':
+                    fandomSelect.value = 'Original';
+                    contentTextarea.placeholder = 'Once upon a time, in a world not so different from our own...';
+                    break;
+            }
+        }
+
+        // Handle publish
+        function handlePublish(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('storyTitle').value;
+            const genre = document.getElementById('storyGenre').value;
+            const fandom = document.getElementById('storyFandom').value;
+            const description = document.getElementById('storyDescription').value;
+            const content = document.getElementById('storyContent').value;
+            
+            if (title && genre && description && content) {
+                alert('🎉 Your story "' + title + '" has been published successfully!\n\nIt will appear in the library for other readers to enjoy.');
+                
+                // In a real application, this would save to a database
+                // For now, we'll just clear the form and redirect
+                document.getElementById('publishForm').reset();
+                showPage('library');
+            } else {
+                alert('Please fill in all required fields before publishing!');
+            }
+        }
+
+        // Initialize app when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
